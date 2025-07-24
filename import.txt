@@ -1,0 +1,1 @@
+"E:\Postgre\bin\psql" -U postgres -d icetrack -f icetrack.sql

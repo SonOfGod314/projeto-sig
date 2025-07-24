@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo ao IceTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f0f9ff; 
+            background-image: url('home-wallpaper.png');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="h-screen">
+    <div class="flex justify-end h-full">       
+        <div class="relative w-full md:w-1/2 lg:w-1/3 h-full bg-white bg-opacity-80 backdrop-blur-sm shadow-2xl flex flex-col justify-center p-8 lg:p-12">           
+            <div class="text-center">
+                <h1 class="text-5xl font-bold text-gray-800 mb-4">
+                    IceTrack
+                </h1>
+                <p class="text-xl text-gray-600 mb-8">
+                    Uma plataforma geoespacial para a análise e visualização do recuo de partículas glaciais como um indicador das mudanças climáticas.
+                </p>
+                <a href="index.html" 
+                   class="inline-block bg-[#63B3ED] text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-[#4299E1] transition-transform transform hover:scale-105">
+                    Explorar o Mapa Interativo
+                </a>
+            </div>
+            <footer class="absolute bottom-8 left-8 right-8 text-center text-xs text-gray-500 italic">
+                    <p>Fonte dos dados:</p>
+                    <p>
+                        GLIMS and NSIDC (2005, updated 2018): Global Land Ice Measurements
+                        from Space glacier database. Compiled and made available by the
+                        international GLIMS community and the National Snow and Ice Data Center,
+                        Boulder CO, U.S.A. DOI:10.7265/N5V98602
+                    </p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

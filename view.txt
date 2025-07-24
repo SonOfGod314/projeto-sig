@@ -1,0 +1,51 @@
+CREATE MATERIALIZED VIEW resumo_taxa_recuo_geleiras AS
+SELECT
+    p.glac_id,
+    p.pais,
+    p.glac_name,
+    p.primeira_data,
+    u.ultima_data,
+    CASE
+        WHEN EXTRACT(YEAR FROM u.ultima_data) - EXTRACT(YEAR FROM p.primeira_data) > 0
+        THEN EXTRACT(YEAR FROM u.ultima_data) - EXTRACT(YEAR FROM p.primeira_data)
+        ELSE 1
+    END AS intervalo_anos,
+    p.primeira_area,
+    u.ultima_area,
+    (u.ultima_area - p.primeira_area) AS mudanca_total_km2,
+    CASE
+        WHEN p.primeira_area > 0 THEN ((u.ultima_area / p.primeira_area) - 1) * 100
+        ELSE 0
+    END AS mudanca_percentual,
+    (u.ultima_area - p.primeira_area) /
+    (CASE
+        WHEN EXTRACT(YEAR FROM u.ultima_data) - EXTRACT(YEAR FROM p.primeira_data) > 0
+        THEN EXTRACT(YEAR FROM u.ultima_data) - EXTRACT(YEAR FROM p.primeira_data)
+        ELSE 1
+    END) AS taxa_recuo_anual_km2,
+    u.geom
+FROM (
+    SELECT DISTINCT ON (glac_id) glac_id, data_observacao AS primeira_data, area_km2_calculada AS primeira_area, pais, glac_name
+    FROM analise_final_geleiras ORDER BY glac_id, data_observacao ASC
+) p
+JOIN (
+    SELECT DISTINCT ON (glac_id) glac_id, data_observacao AS ultima_data, area_km2_calculada AS ultima_area, geom
+    FROM analise_final_geleiras ORDER BY glac_id, data_observacao DESC
+) u ON p.glac_id = u.glac_id;
+
+-- Adiciona um índice para otimizar consultas espaciais nesta nova visão materializada.
+CREATE INDEX idx_resumo_taxa_recuo_geom ON resumo_taxa_recuo_geleiras USING GIST (geom);
+
+
+
+
+-- Cria a visão materializada para as estatísticas globais, lendo da visão já otimizada.
+CREATE MATERIALIZED VIEW estatisticas_globais AS
+SELECT
+    COUNT(DISTINCT glac_id) AS total_geleiras_analisadas,
+    SUM(mudanca_total_km2) AS perda_total_global_km2,
+    AVG(taxa_recuo_anual_km2) AS media_global_recuo_anual_km2
+FROM
+    resumo_taxa_recuo_geleiras
+WHERE
+    intervalo_anos >= 1;
